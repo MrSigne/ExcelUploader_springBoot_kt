@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
 	id("org.springframework.boot") version "2.5.5-SNAPSHOT"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -25,20 +26,23 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-data-rest")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.4")
+	implementation("org.springframework.boot:spring-boot-starter-data-rest:2.5.4")
+	implementation("org.springframework.boot:spring-boot-starter-web:2.5.4")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
+	implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.21")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
+	implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.2")
+	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 
-	implementation("org.apache.poi:poi:4.1.2")
-	implementation("org.apache.poi:poi-ooxml:4.1.2")
+	implementation("org.apache.poi:poi:5.0.0")
+	implementation("org.apache.poi:poi-ooxml:5.0.0")
 
-	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("mysql:mysql-connector-java")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	compileOnly("org.projectlombok:lombok:1.18.20")
+//	runtimeOnly("mysql:mysql-connector-java:8.0.25")
+	runtimeOnly("org.postgresql:postgresql:42.2.23.jre7")
+	annotationProcessor("org.projectlombok:lombok:1.18.20")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.4")
 }
 
 tasks.withType<KotlinCompile> {

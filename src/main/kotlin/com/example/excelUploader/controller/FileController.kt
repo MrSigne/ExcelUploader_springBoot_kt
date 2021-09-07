@@ -1,8 +1,9 @@
 package com.example.excelUploader.controller
 
-import com.example.excelUploader.model.File
+
 import com.example.excelUploader.model.FileDB
 import com.example.excelUploader.service.FileServiceImpl
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/file")
-class FileController(val fileServiceImpl: FileServiceImpl) {
+class FileController(@Autowired val fileServiceImpl: FileServiceImpl) {
     @PostMapping
     fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<Void> {
         fileServiceImpl.uploadFile(file)

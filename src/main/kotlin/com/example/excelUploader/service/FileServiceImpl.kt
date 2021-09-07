@@ -3,6 +3,7 @@ package com.example.excelUploader.service
 import com.example.excelUploader.model.FileDB
 import com.example.excelUploader.repository.FileRepository
 import com.example.excelUploader.util.ExcelHelper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -12,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile
 //}
 
 @Service
-class FileServiceImpl(private  val fileRepository: FileRepository) {
+class FileServiceImpl(@Autowired private val fileRepository: FileRepository) {
+
     @Transactional
     fun uploadFile(file: MultipartFile){
         if (ExcelHelper.hasExcelFormat(file)) {
