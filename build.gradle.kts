@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
 	implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.2")
 	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
+	implementation("com.vladmihalcea:hibernate-types-52:2.10.0")
 
 	implementation("org.apache.poi:poi:5.0.0")
 	implementation("org.apache.poi:poi-ooxml:5.0.0")
