@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.4")
 	implementation("org.springframework.boot:spring-boot-starter-data-rest:2.5.4")
 	implementation("org.springframework.boot:spring-boot-starter-web:2.5.4")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
 	implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.21")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
@@ -38,6 +39,10 @@ dependencies {
 
 	implementation("org.apache.poi:poi:5.0.0")
 	implementation("org.apache.poi:poi-ooxml:5.0.0")
+
+	implementation("io.jsonwebtoken:jjwt-api:0.11.1")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.1")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.1")
 
 	compileOnly("org.projectlombok:lombok:1.18.20")
 //	runtimeOnly("mysql:mysql-connector-java:8.0.25")
