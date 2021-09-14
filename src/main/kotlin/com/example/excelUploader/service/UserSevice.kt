@@ -1,6 +1,7 @@
 package com.example.excelUploader.service
 
 import com.example.excelUploader.dtos.LoginDTO
+import com.example.excelUploader.dtos.SigninDTO
 import com.example.excelUploader.model.Role
 import com.example.excelUploader.model.UserDB
 import com.example.excelUploader.repository.UserRepository
@@ -24,13 +25,18 @@ class UserSevice(@Autowired val userRepository: UserRepository) {
     val key : Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
 
     @Transactional
-    fun userSignIn (user: UserDB): UserDB? {
-        val userExist = userRepository.findByUsernameIgnoreCase(user.username)
-        println(userExist)
+    fun userSignIn (body: SigninDTO): UserDB? {
+
+        val userExist = userRepository.findByUsernameIgnoreCase(body.username)
+//        println(userExist)
         if(userExist != null){
             return null
         }
-        user.password = BCryptPasswordEncoder().encode(user.password)
+        val user = UserDB()
+        user.email = body.email
+        user.username = body.username
+        user.role = if(body.role =="teacher") Role.Teacher else Role.Student
+        user.password = BCryptPasswordEncoder().encode(body.password)
         return userRepository.save(user)
     }
 

@@ -8,6 +8,7 @@ import com.example.excelUploader.model.Role
 import com.example.excelUploader.model.Subject
 import com.example.excelUploader.service.SubjectService
 import com.example.excelUploader.service.UserSevice
+import com.example.excelUploader.util.Validators
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/subject")
 class SubjectMarksController(@Autowired val subjectService: SubjectService, val userSevice: UserSevice) {
+    val validators = Validators()
 
     @PostMapping
     fun addSubject(@RequestBody sub:SubjectDTO, @CookieValue("jwt") jwt: String?):ResponseEntity<Any>{
@@ -52,7 +54,7 @@ class SubjectMarksController(@Autowired val subjectService: SubjectService, val 
         val body = userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Invalid token!"))
         if(!userSevice.isTeacher(body)) return ResponseEntity.status(403).body(MessageDTO("Permission denied!"))
 
-        if(!subjectService.isValidScore(score.score)) return ResponseEntity.badRequest().body(MessageDTO("Invalid score"))
+        if(!validators.isValidScore(score.score)) return ResponseEntity.badRequest().body(MessageDTO("Invalid score"))
         val subject = subjectService.findBySubjectName(score.subject)
             ?: return ResponseEntity.badRequest().body(MessageDTO("No subject with name "+score.subject))
         val user = userSevice.findByNameAndRole(score.student, Role.Student)
@@ -74,5 +76,24 @@ class SubjectMarksController(@Autowired val subjectService: SubjectService, val 
         userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Unauthorized!"))
         return ResponseEntity.ok(subjectService.getAllSubjects())
     }
+
+//    @GetMapping("/score")
+//    fun getMarks(@RequestBody sub: SubjectDTO, @CookieValue("jwt") jwt: String?): ResponseEntity<Any>{
+//        val body = userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Invalid token!"))
+//        if(!userSevice.isStudent(body)) return ResponseEntity.status(403).body(MessageDTO("Only student can have score report"))
+//        val subject = subjectService.findBySubjectName(sub.subject)
+//            ?: return  ResponseEntity.badRequest().body(MessageDTO("No subject with name "+sub.subject))
+//        return ResponseEntity.ok(subjectService.getAllScore(body.issuer.toLong()))
+//
+//    }
+
+    @GetMapping("/report")
+    fun getReport(@CookieValue("jwt") jwt: String?): ResponseEntity<Any>{
+        val body = userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Invalid token!"))
+        if(!userSevice.isStudent(body)) return ResponseEntity.status(403).body(MessageDTO("Only student can have score report"))
+        return ResponseEntity.ok(subjectService.getAllScore(body.issuer.toLong()))
+
+    }
+
 
 }

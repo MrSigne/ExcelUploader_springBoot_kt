@@ -1,5 +1,6 @@
 package com.example.excelUploader.model
 
+import org.jetbrains.annotations.NotNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import javax.persistence.*
 

@@ -1,5 +1,6 @@
 package com.example.excelUploader.service
 
+
 import com.example.excelUploader.dtos.SubjectDTO
 import com.example.excelUploader.model.MarksDB
 import com.example.excelUploader.model.Subject
@@ -53,12 +54,11 @@ class SubjectService(@Autowired val subjectRepository: SubjectRepository, @Autow
         return listSubDTO
     }
 
-    fun isValidScore (score:Any): Boolean{
-        return if(score is Number){
-            score.toInt() in (0..100)
-        }else{
-            false
-        }
+    @Transactional
+    fun getAllScore(id: Long): List<Any>{
+        val res = marksRepository.findByUserId(id)
+        println(res)
+        return res
     }
 
 }
