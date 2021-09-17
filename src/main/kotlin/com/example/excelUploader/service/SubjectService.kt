@@ -56,9 +56,13 @@ class SubjectService(@Autowired val subjectRepository: SubjectRepository, @Autow
 
     @Transactional
     fun getAllScore(id: Long): List<Any>{
-        val res = marksRepository.findByUserId(id)
-        println(res)
-        return res
+        return marksRepository.findByUserId(id)
+    }
+
+    @Transactional
+    fun getSubjectScores(sub: String): List<Any>?{
+        val subject = subjectRepository.findBySubjectNameIgnoreCase(sub) ?: return null
+        return subject.id?.let { marksRepository.findResultBySubject(it) }
     }
 
 }

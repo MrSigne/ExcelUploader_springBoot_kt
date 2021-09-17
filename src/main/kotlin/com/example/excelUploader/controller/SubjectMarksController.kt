@@ -90,10 +90,20 @@ class SubjectMarksController(@Autowired val subjectService: SubjectService, val 
     @GetMapping("/report")
     fun getReport(@CookieValue("jwt") jwt: String?): ResponseEntity<Any>{
         val body = userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Invalid token!"))
-        if(!userSevice.isStudent(body)) return ResponseEntity.status(403).body(MessageDTO("Only student can have score report"))
+        if(!userSevice.isStudent(body)) return ResponseEntity.status(403).body(MessageDTO("Only students can have a score report"))
         return ResponseEntity.ok(subjectService.getAllScore(body.issuer.toLong()))
-
     }
 
+    @GetMapping("/result")
+    fun getSubjectResult(@RequestBody sub: SubjectDTO, @CookieValue("jwt") jwt: String?): ResponseEntity<Any>{
+        val body = userSevice.verifyToken(jwt) ?: return ResponseEntity.status(401).body(MessageDTO("Invalid token!"))
+        if(!userSevice.isTeacher(body)) return ResponseEntity.status(403).body(MessageDTO("Permission denied!"))
+
+        if(sub.subject.isNullOrBlank()){
+            return ResponseEntity.badRequest().body(MessageDTO("Subject name required!"))
+        }
+        val res = subjectService.getSubjectScores(sub.subject) ?: return ResponseEntity.badRequest().body(MessageDTO("No subject with name ${sub.subject}"))
+        return ResponseEntity.ok(res)
+    }
 
 }
