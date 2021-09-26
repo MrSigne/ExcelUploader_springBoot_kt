@@ -43,6 +43,7 @@ object ExcelHelper {
                         (LocalDate.now().year - year[year.lastIndex].toInt()).also { fileInfo.age = it }
 
                     }
+                    4 -> fileInfo.location = formatter.formatCellValue(it).split(",").map {it.trim().toFloat()}.toTypedArray()
 
                 }
             }

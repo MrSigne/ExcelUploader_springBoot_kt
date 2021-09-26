@@ -31,6 +31,7 @@ class FileDB(
     @Column(name = "dob")
     var dob: Date,
     var age: Int?,
+    var location: Array<Float>? = arrayOf()
 )
 
 
