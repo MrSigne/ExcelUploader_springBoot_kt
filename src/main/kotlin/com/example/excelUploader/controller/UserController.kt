@@ -7,8 +7,10 @@ import com.example.excelUploader.dtos.SigninDTO
 import com.example.excelUploader.service.UserSevice
 import com.example.excelUploader.util.Validators
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
@@ -29,6 +31,13 @@ class UserController(@Autowired val userSevice: UserSevice)  {
         }
         return ResponseEntity.badRequest().body(MessageDTO("Could not register! Username already Exist"))
     }
+
+    @PostMapping("/signMany")
+    fun manyUsers(@RequestParam("file") file: MultipartFile): ResponseEntity<Void> {
+        userSevice.uploadManyUsers(file)
+        return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
     @PostMapping("/login")
     fun login (@RequestBody body: LoginDTO, response: HttpServletResponse): ResponseEntity<Any>{
         val jwt = userSevice.loginVerif(body)

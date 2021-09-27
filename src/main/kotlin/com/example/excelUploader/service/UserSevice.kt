@@ -6,6 +6,7 @@ import com.example.excelUploader.dtos.SigninDTO
 import com.example.excelUploader.model.Role
 import com.example.excelUploader.model.UserDB
 import com.example.excelUploader.repository.UserRepository
+import com.example.excelUploader.util.ExcelHelper
 import com.example.excelUploader.util.RandGenerator
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.security.Key
 import java.time.Duration
 import java.time.Instant
@@ -27,18 +29,30 @@ class UserSevice(@Autowired val userRepository: UserRepository, @Autowired val e
     val key : Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
     @Transactional
     fun userSignIn (body: SigninDTO): UserDB? {
-
         val userExist = userRepository.findByUsernameIgnoreCase(body.username)
-//        println(userExist)
         if(userExist != null){
             return null
         }
         val user = UserDB()
         user.email = body.email
         user.username = body.username
-        user.role = if(body.role =="teacher") Role.Teacher else Role.Student
+        user.role = if(body.role.equals("teacher", true)) Role.Teacher else Role.Student
         user.password = BCryptPasswordEncoder().encode(body.password)
         return userRepository.save(user)
+    }
+
+    @Transactional
+    fun uploadManyUsers (file: MultipartFile){
+        try {
+            if(ExcelHelper.hasExcelFormat(file)){
+                val users = ExcelHelper.excelToUser(file)
+                userRepository.saveAll(users)
+            }else{
+                throw RuntimeException("Not excel format")
+            }
+        }catch (e: Exception){
+            throw Exception("Could not parse file!")
+        }
     }
 
     @Transactional
@@ -69,7 +83,7 @@ class UserSevice(@Autowired val userRepository: UserRepository, @Autowired val e
     @Transactional
     fun sendPasswordCode(email: String): Boolean?{
         val user = userRepository.findByEmailIgnoreCase(email) ?: return null
-        val randGen: RandGenerator = RandGenerator()
+        val randGen = RandGenerator()
         val code = randGen.RandGenerator(5)
         return try {
             emailService.sendConfirmationCode(code, user.email)
