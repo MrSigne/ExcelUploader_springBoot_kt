@@ -43,7 +43,12 @@ class UserController(@Autowired val userSevice: UserSevice)  {
         if(!validators.isEmail(body.email)) return ResponseEntity.badRequest().body(MessageDTO("Invalid email address!"))
         val res = userSevice.sendPasswordCode(body.email)
             ?: return ResponseEntity.status(404).body(MessageDTO("No user with this email"))
-        return ResponseEntity.ok(MessageDTO("Password change code successfully sent to your email"))
+        return  if(!res){
+            ResponseEntity.status(500).body(MessageDTO("Code to change password could not be sent"))
+        }else{
+            ResponseEntity.ok(MessageDTO("Password change code successfully sent to your email"))
+        }
+
     }
 
     @PostMapping("/changePass")

@@ -71,10 +71,16 @@ class UserSevice(@Autowired val userRepository: UserRepository, @Autowired val e
         val user = userRepository.findByEmailIgnoreCase(email) ?: return null
         val randGen: RandGenerator = RandGenerator()
         val code = randGen.RandGenerator(5)
-        emailService.sendConfirmationCode(code, user.email)
-        user.passwordChangeCode = code
-        userRepository.save(user)
-        return true
+        return try {
+            emailService.sendConfirmationCode(code, user.email)
+            user.passwordChangeCode = code
+            userRepository.save(user)
+            true
+        }catch (e: Exception){
+            println(e)
+            false
+        }
+
     }
 
     @Transactional
