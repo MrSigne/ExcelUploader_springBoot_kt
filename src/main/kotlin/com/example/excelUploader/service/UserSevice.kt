@@ -1,10 +1,12 @@
 package com.example.excelUploader.service
 
 import com.example.excelUploader.dtos.LoginDTO
+import com.example.excelUploader.dtos.PassChangeDTO
 import com.example.excelUploader.dtos.SigninDTO
 import com.example.excelUploader.model.Role
 import com.example.excelUploader.model.UserDB
 import com.example.excelUploader.repository.UserRepository
+import com.example.excelUploader.util.RandGenerator
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -20,10 +22,9 @@ import java.util.*
 
 
 @Service
-class UserSevice(@Autowired val userRepository: UserRepository) {
+class UserSevice(@Autowired val userRepository: UserRepository, @Autowired val emailService: EmailService) {
 
     val key : Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
-
     @Transactional
     fun userSignIn (body: SigninDTO): UserDB? {
 
@@ -63,6 +64,31 @@ class UserSevice(@Autowired val userRepository: UserRepository) {
             .signWith(key)
             .compact()
 
+    }
+
+    @Transactional
+    fun sendPasswordCode(email: String): Boolean?{
+        val user = userRepository.findByEmailIgnoreCase(email) ?: return null
+        val randGen: RandGenerator = RandGenerator()
+        val code = randGen.RandGenerator(5)
+        emailService.sendConfirmationCode(code, user.email)
+        user.passwordChangeCode = code
+        userRepository.save(user)
+        return true
+    }
+
+    @Transactional
+    fun changePassword(data: PassChangeDTO): Boolean?{
+        val user = userRepository.findByEmailIgnoreCase(data.email) ?: return null
+        if(user.passwordChangeCode == null) return false
+        return if(user.passwordChangeCode.equals(data.code)){
+            user.password = BCryptPasswordEncoder().encode(data.password)
+            user.passwordChangeCode = null
+            userRepository.save(user)
+            true
+        }else{
+            false
+        }
     }
 
     fun verifyToken(jwt: String?): Claims? {

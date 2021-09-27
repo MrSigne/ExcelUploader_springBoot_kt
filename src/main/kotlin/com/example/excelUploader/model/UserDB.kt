@@ -22,6 +22,8 @@ class UserDB (
         var email: String ="",
         @Column
         var password: String ="",
+        @Column
+        var passwordChangeCode: String? = null,
         @Enumerated(EnumType.STRING)
         var role: Role = Role.Student
         )

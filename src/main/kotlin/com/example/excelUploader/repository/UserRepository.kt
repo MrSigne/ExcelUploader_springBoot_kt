@@ -13,4 +13,5 @@ interface UserRepository: CrudRepository <UserDB, Long>{
     fun findByUsernameIgnoreCase(username: String): UserDB?
     fun findByUsernameIgnoreCaseAndRole(username: String, role: Role): UserDB?
     fun findByUsernameOrEmail(email: String, username: String): UserDB?
+
 }
